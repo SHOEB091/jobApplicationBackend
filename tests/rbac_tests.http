@@ -1,0 +1,132 @@
+### RBAC System Test Requests ###
+
+@baseUrl = http://localhost:5000/api
+
+### 1. Register a regular user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+### 2. Login as regular user
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+### 3. Register a superadmin (manually set in database)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Super Admin",
+  "email": "superadmin@example.com",
+  "password": "admin123"
+}
+
+### 4. Login as superadmin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "superadmin@example.com",
+  "password": "admin123"
+}
+
+### 5. Create a company (Admin or Superadmin)
+POST {{baseUrl}}/companies
+Content-Type: application/json
+
+{
+  "name": "Tech Corp",
+  "description": "A leading technology company",
+  "location": "San Francisco, CA",
+  "website": "https://techcorp.com",
+  "industry": "Technology",
+  "size": "201-500"
+}
+
+### 6. Get all companies (Superadmin only)
+GET {{baseUrl}}/companies
+
+### 7. Get company by ID
+GET {{baseUrl}}/companies/COMPANY_ID_HERE
+
+### 8. Request admin role (as regular user)
+POST {{baseUrl}}/auth/request-admin
+Content-Type: application/json
+
+{
+  "companyId": "COMPANY_ID_HERE",
+  "message": "I would like to manage jobs for Tech Corp"
+}
+
+### 9. Get pending admin requests (Superadmin only)
+GET {{baseUrl}}/admin/requests
+
+### 10. Get all admin requests (Superadmin only)
+GET {{baseUrl}}/admin/requests/all
+
+### 11. Approve admin request (Superadmin only)
+PUT {{baseUrl}}/admin/requests/REQUEST_ID_HERE/approve
+
+### 12. Reject admin request (Superadmin only)
+PUT {{baseUrl}}/admin/requests/REQUEST_ID_HERE/reject
+
+### 13. Create a job (Admin or Superadmin)
+POST {{baseUrl}}/jobs
+Content-Type: application/json
+
+{
+  "title": "Senior Software Engineer",
+  "company": "COMPANY_ID_HERE",
+  "location": "San Francisco, CA",
+  "description": "We are looking for an experienced software engineer...",
+  "salary": 150000,
+  "tags": ["JavaScript", "React", "Node.js"]
+}
+
+### 14. Get all jobs (Public)
+GET {{baseUrl}}/jobs
+
+### 15. Get jobs by company (Public)
+GET {{baseUrl}}/jobs/company/COMPANY_ID_HERE
+
+### 16. Get job by ID (Public)
+GET {{baseUrl}}/jobs/JOB_ID_HERE
+
+### 17. Update job (Admin of same company or Superadmin)
+PUT {{baseUrl}}/jobs/JOB_ID_HERE
+Content-Type: application/json
+
+{
+  "title": "Lead Software Engineer",
+  "salary": 160000
+}
+
+### 18. Delete job (Admin of same company or Superadmin)
+DELETE {{baseUrl}}/jobs/JOB_ID_HERE
+
+### 19. Update company (Superadmin or Company Admin)
+PUT {{baseUrl}}/companies/COMPANY_ID_HERE
+Content-Type: application/json
+
+{
+  "description": "Updated description for Tech Corp"
+}
+
+### 20. Delete company (Superadmin only)
+DELETE {{baseUrl}}/companies/COMPANY_ID_HERE
+
+### 21. Get admins by company (Superadmin only)
+GET {{baseUrl}}/admin/company/COMPANY_ID_HERE
+
+### 22. Logout
+POST {{baseUrl}}/auth/logout
