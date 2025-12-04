@@ -1,6 +1,8 @@
 const AdminRequest = require('../models/AdminRequest');
 const User = require('../models/User');
 const Company = require('../models/Company');
+const Job = require('../models/Job');
+const Category = require('../models/Category');
 
 // @desc    Get all pending admin requests
 // @route   GET /api/admin/requests
@@ -165,10 +167,36 @@ const getAdminsByCompany = async (req, res) => {
   }
 };
 
+// @desc    Get platform stats
+// @route   GET /api/admin/stats
+// @access  Private/Superadmin
+const getPlatformStats = async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments({ role: 'user' });
+    const totalJobs = await Job.countDocuments();
+    const totalCategories = await Category.countDocuments();
+
+    res.json({
+      success: true,
+      data: {
+        users: totalUsers,
+        jobs: totalJobs,
+        categories: totalCategories
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 module.exports = {
   getPendingAdminRequests,
   getAllAdminRequests,
   approveAdminRequest,
   rejectAdminRequest,
-  getAdminsByCompany
+  getAdminsByCompany,
+  getPlatformStats
 };

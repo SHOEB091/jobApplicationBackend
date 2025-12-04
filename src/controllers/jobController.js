@@ -1,5 +1,4 @@
 const Job = require('../models/Job');
-const Company = require('../models/Company');
 const Category = require('../models/Category');
 const { jobSchema } = require('../utils/validationSchemas');
 
@@ -26,7 +25,6 @@ const getJobs = async (req, res) => {
 
     const count = await Job.countDocuments({ ...filters });
     const jobs = await Job.find({ ...filters })
-      .populate('company', 'name location logo')
       .populate('category', 'name slug')
       .populate('user', 'name')
       .limit(pageSize)
@@ -54,7 +52,6 @@ const getJobs = async (req, res) => {
 const getJobById = async (req, res) => {
   try {
     const job = await Job.findById(req.params.id)
-      .populate('company', 'name location description website logo')
       .populate('category', 'name description slug')
       .populate('user', 'name email');
 
@@ -83,7 +80,6 @@ const getJobById = async (req, res) => {
 const getJobsByCompany = async (req, res) => {
   try {
     const jobs = await Job.find({ company: req.params.companyId })
-      .populate('company', 'name location logo')
       .populate('category', 'name slug')
       .populate('user', 'name')
       .sort({ createdAt: -1 });
@@ -116,14 +112,6 @@ const createJob = async (req, res) => {
 
     const { title, company, category, location, description, salary, tags } = req.body;
 
-    // Verify company exists
-    const companyExists = await Company.findById(company);
-    if (!companyExists) {
-      return res.status(404).json({
-        success: false,
-        message: 'Company not found'
-      });
-    }
 
     // Verify category exists and is active
     const categoryExists = await Category.findById(category);
@@ -140,18 +128,7 @@ const createJob = async (req, res) => {
       });
     }
 
-    // Check authorization
-    if (req.user.role === 'admin') {
-      // Admin can only create jobs for their own company
-      if (req.user.company.toString() !== company) {
-        return res.status(403).json({
-          success: false,
-          message: 'You can only create jobs for your own company'
-        });
-      }
-    }
-    // Superadmin can create jobs for any company
-
+    // Only superadmin can create jobs
     const job = new Job({
       user: req.user._id,
       title,
@@ -165,7 +142,6 @@ const createJob = async (req, res) => {
 
     const createdJob = await job.save();
     const populatedJob = await Job.findById(createdJob._id)
-      .populate('company', 'name location logo')
       .populate('category', 'name slug')
       .populate('user', 'name');
 
@@ -197,17 +173,6 @@ const updateJob = async (req, res) => {
       });
     }
 
-    // Check authorization
-    if (req.user.role === 'admin') {
-      // Admin can only update jobs from their own company
-      if (job.company.toString() !== req.user.company.toString()) {
-        return res.status(403).json({
-          success: false,
-          message: 'Not authorized to update this job'
-        });
-      }
-    }
-    // Superadmin can update any job
 
     // Verify category if being updated
     if (category && category !== job.category.toString()) {
@@ -236,7 +201,6 @@ const updateJob = async (req, res) => {
 
     const updatedJob = await job.save();
     const populatedJob = await Job.findById(updatedJob._id)
-      .populate('company', 'name location logo')
       .populate('category', 'name slug')
       .populate('user', 'name');
 
@@ -266,17 +230,6 @@ const deleteJob = async (req, res) => {
       });
     }
 
-    // Check authorization
-    if (req.user.role === 'admin') {
-      // Admin can only delete jobs from their own company
-      if (job.company.toString() !== req.user.company.toString()) {
-        return res.status(403).json({
-          success: false,
-          message: 'Not authorized to delete this job'
-        });
-      }
-    }
-    // Superadmin can delete any job
 
     await job.deleteOne();
     
@@ -298,7 +251,6 @@ const deleteJob = async (req, res) => {
 const getJobsByCategory = async (req, res) => {
   try {
     const jobs = await Job.find({ category: req.params.categoryId })
-      .populate('company', 'name location logo')
       .populate('category', 'name slug')
       .populate('user', 'name')
       .sort({ createdAt: -1 });

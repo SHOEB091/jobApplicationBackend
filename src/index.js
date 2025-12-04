@@ -16,22 +16,46 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
+
+// CORS Configuration for Flutter Web
+app.use(cors({
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Allow any localhost origin
+    if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  exposedHeaders: ['Set-Cookie']
+}));
+
 app.use(
   session({
     secret: process.env.JWT_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: process.env.NODE_ENV === 'production' },
+    cookie: { 
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      sameSite: 'lax'
+    },
   })
 );
-app.use(cors());
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 app.use(morgan('dev'));
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/jobs', require('./routes/jobRoutes'));
-app.use('/api/companies', require('./routes/companyRoutes'));
 app.use('/api/categories', require('./routes/categoryRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));

@@ -13,7 +13,7 @@ const loginSchema = Joi.object({
 
 const jobSchema = Joi.object({
   title: Joi.string().required(),
-  company: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required(), // MongoDB ObjectId
+  company: Joi.string().min(2).required(), // Changed from ObjectId to string
   category: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required(), // MongoDB ObjectId
   location: Joi.string().required(),
   description: Joi.string().required(),

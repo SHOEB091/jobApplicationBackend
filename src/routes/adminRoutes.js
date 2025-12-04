@@ -5,7 +5,8 @@ const {
   getAllAdminRequests,
   approveAdminRequest,
   rejectAdminRequest,
-  getAdminsByCompany
+  getAdminsByCompany,
+  getPlatformStats
 } = require('../controllers/adminController');
 const { protect, requireRole } = require('../middlewares/authMiddleware');
 
@@ -15,5 +16,6 @@ router.get('/requests/all', protect, requireRole('superadmin'), getAllAdminReque
 router.put('/requests/:id/approve', protect, requireRole('superadmin'), approveAdminRequest);
 router.put('/requests/:id/reject', protect, requireRole('superadmin'), rejectAdminRequest);
 router.get('/company/:companyId', protect, requireRole('superadmin'), getAdminsByCompany);
+router.get('/stats', protect, requireRole('superadmin'), getPlatformStats);
 
 module.exports = router;

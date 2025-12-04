@@ -1,7 +1,6 @@
 const User = require('../models/User');
-const AdminRequest = require('../models/AdminRequest');
 const generateToken = require('../utils/generateToken');
-const { registerSchema, loginSchema, adminRequestSchema } = require('../utils/validationSchemas');
+const { registerSchema, loginSchema } = require('../utils/validationSchemas');
 
 // Helper to set cookie
 const setCookie = (res, token) => {
@@ -41,8 +40,8 @@ const authUser = async (req, res) => {
           name: user.name,
           email: user.email,
           role: user.role,
-          company: user.company,
-          adminApproved: user.adminApproved,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
           token: token
         }
       });
@@ -102,6 +101,8 @@ const registerUser = async (req, res) => {
           name: user.name,
           email: user.email,
           role: user.role,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
           token: token
         }
       });
@@ -112,68 +113,7 @@ const registerUser = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
-};
-
-// @desc    Request admin role
-// @route   POST /api/auth/request-admin
-// @access  Private
-const requestAdminRole = async (req, res) => {
-  try {
-    const { error } = adminRequestSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.details[0].message
-      });
-    }
-
-    const { companyId, message } = req.body;
-
-    // Check if user already has admin role
-    if (req.user.role === 'admin' || req.user.role === 'superadmin') {
-      return res.status(400).json({
-        success: false,
-        message: 'User already has admin privileges'
-      });
-    }
-
-    // Check if there's already a pending request
-    const existingRequest = await AdminRequest.findOne({
-      user: req.user._id,
-      status: 'pending'
-    });
-
-    if (existingRequest) {
-      return res.status(400).json({
-        success: false,
-        message: 'You already have a pending admin request'
-      });
-    }
-
-    // Create admin request
-    const adminRequest = await AdminRequest.create({
-      user: req.user._id,
-      company: companyId,
-      message,
-      status: 'pending'
-    });
-
-    // Update user's adminRequestedAt field
-    await User.findByIdAndUpdate(req.user._id, {
-      adminRequestedAt: new Date()
-    });
-
-    res.status(201).json({
-      success: true,
-      message: 'Admin request submitted successfully',
-      data: adminRequest
-    });
-  } catch (error) {
+    console.error('Register Error:', error);
     return res.status(500).json({
       success: false,
       message: error.message
@@ -195,4 +135,4 @@ const logoutUser = (req, res) => {
   });
 };
 
-module.exports = { authUser, registerUser, requestAdminRole, logoutUser };
+module.exports = { authUser, registerUser, logoutUser };

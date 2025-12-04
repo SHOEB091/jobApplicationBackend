@@ -18,19 +18,8 @@ const userSchema = mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['user', 'admin', 'superadmin'],
+      enum: ['user', 'superadmin'],
       default: 'user',
-    },
-    company: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Company',
-    },
-    adminApproved: {
-      type: Boolean,
-      default: false,
-    },
-    adminRequestedAt: {
-      type: Date,
     },
   },
   {
