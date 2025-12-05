@@ -48,6 +48,7 @@ app.use(
     },
   })
 );
+
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
@@ -59,6 +60,9 @@ app.use('/api/jobs', require('./routes/jobRoutes'));
 app.use('/api/categories', require('./routes/categoryRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
+app.use('/api/admin-requests', require('./routes/adminRequestRoutes'));
+app.use('/api/companies', require('./routes/companyRoutes'));
+app.use('/api/study-materials', require('./routes/studyMaterialRoutes'));
 
 const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
