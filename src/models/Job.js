@@ -33,6 +33,10 @@ const jobSchema = mongoose.Schema(
       required: true,
     },
     tags: [String],
+    applicationUrl: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

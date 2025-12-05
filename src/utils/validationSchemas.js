@@ -19,6 +19,7 @@ const jobSchema = Joi.object({
   description: Joi.string().required(),
   salary: Joi.number().required(),
   tags: Joi.array().items(Joi.string()),
+  applicationUrl: Joi.string().uri().required(),
 });
 
 const companySchema = Joi.object({

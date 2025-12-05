@@ -23,7 +23,11 @@ const getJobs = async (req, res) => {
     const categoryFilter = req.query.category ? { category: req.query.category } : {};
     const filters = { ...keyword, ...categoryFilter };
 
+    console.log('getJobs filters:', JSON.stringify(filters, null, 2));
+
     const count = await Job.countDocuments({ ...filters });
+    console.log('getJobs count:', count);
+
     const jobs = await Job.find({ ...filters })
       .populate('category', 'name slug')
       .populate('user', 'name')
@@ -110,7 +114,7 @@ const createJob = async (req, res) => {
       });
     }
 
-    const { title, company, category, location, description, salary, tags } = req.body;
+    const { title, company, category, location, description, salary, tags, applicationUrl } = req.body;
 
 
     // Verify category exists and is active
@@ -138,6 +142,7 @@ const createJob = async (req, res) => {
       description,
       salary,
       tags,
+      applicationUrl,
     });
 
     const createdJob = await job.save();
@@ -162,7 +167,7 @@ const createJob = async (req, res) => {
 // @access  Private/Admin or Superadmin
 const updateJob = async (req, res) => {
   try {
-    const { title, company, category, location, description, salary, tags } = req.body;
+    const { title, company, category, location, description, salary, tags, applicationUrl } = req.body;
 
     const job = await Job.findById(req.params.id);
 
@@ -198,6 +203,7 @@ const updateJob = async (req, res) => {
     job.description = description || job.description;
     job.salary = salary || job.salary;
     job.tags = tags || job.tags;
+    job.applicationUrl = applicationUrl || job.applicationUrl;
 
     const updatedJob = await job.save();
     const populatedJob = await Job.findById(updatedJob._id)
