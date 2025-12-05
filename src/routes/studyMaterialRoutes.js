@@ -6,10 +6,11 @@ const {
   deleteStudyMaterial
 } = require('../controllers/studyMaterialController');
 const { protect, requireRole } = require('../middlewares/authMiddleware');
+const upload = require('../middlewares/uploadMiddleware');
 
 router
   .route('/')
-  .post(protect, requireRole('superadmin'), createStudyMaterial)
+  .post(protect, requireRole('superadmin'), upload.single('file'), createStudyMaterial)
   .get(getAllStudyMaterials);
 
 router

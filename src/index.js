@@ -63,6 +63,7 @@ app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/admin-requests', require('./routes/adminRequestRoutes'));
 app.use('/api/companies', require('./routes/companyRoutes'));
 app.use('/api/study-materials', require('./routes/studyMaterialRoutes'));
+app.use('/api/certifications', require('./routes/certificationRoutes'));
 
 const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

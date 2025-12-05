@@ -14,20 +14,22 @@ const storage = multer.diskStorage({
 });
 
 function checkFileType(file, cb) {
-  const filetypes = /pdf|doc|docx/;
+  const filetypes = /pdf|doc|docx|jpeg|jpg|png/;
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = filetypes.test(file.mimetype);
+  // Allow specific mimetypes OR generic octet-stream (common in some upload scenarios)
+  const mimetype = filetypes.test(file.mimetype) || file.mimetype === 'application/octet-stream';
 
   if (extname && mimetype) {
     return cb(null, true);
   } else {
-    cb('Error: Resumes only (PDF, DOC, DOCX)!');
+    cb(new Error(`Error: File type not allowed! Got mimetype: ${file.mimetype} for file: ${file.originalname}`));
   }
 }
 
 const upload = multer({
   storage,
   fileFilter: function (req, file, cb) {
+    console.log('Multer Checking file:', file.originalname, file.mimetype);
     checkFileType(file, cb);
   },
 });
