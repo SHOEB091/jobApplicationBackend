@@ -6,25 +6,11 @@ exports.createStudyMaterial = async (req, res) => {
     const { title, description } = req.body;
     let { fileUrl, type } = req.body;
 
-    // Handle file upload
-    if (req.file) {
-      fileUrl = `/${req.file.path.replace(/\\/g, '/')}`;
-      
-      // Infer type from mimetype
-      if (req.file.mimetype === 'application/pdf') {
-        type = 'pdf';
-      } else if (req.file.mimetype.startsWith('image/')) {
-        type = 'image';
-      } else if (req.file.mimetype.includes('word')) {
-        type = 'doc';
-      } else {
-        type = 'other';
-      }
-    } else if (!fileUrl) {
-       // If no file and no URL provided
-       return res.status(400).json({
+    // File uploads are disabled; require a link URL
+    if (!fileUrl) {
+      return res.status(400).json({
         success: false,
-        message: 'Please provide a file or a URL'
+        message: 'Please provide a resource URL'
       });
     }
 

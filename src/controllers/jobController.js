@@ -114,7 +114,7 @@ const createJob = async (req, res) => {
       });
     }
 
-    const { title, company, category, location, description, salary, tags, applicationUrl } = req.body;
+    const { title, company, category, location, description, tags, applicationUrl } = req.body;
 
 
     // Verify category exists and is active
@@ -140,7 +140,6 @@ const createJob = async (req, res) => {
       category,
       location,
       description,
-      salary,
       tags,
       applicationUrl,
     });
@@ -167,7 +166,7 @@ const createJob = async (req, res) => {
 // @access  Private/Admin or Superadmin
 const updateJob = async (req, res) => {
   try {
-    const { title, company, category, location, description, salary, tags, applicationUrl } = req.body;
+    const { title, company, category, location, description, tags, applicationUrl } = req.body;
 
     const job = await Job.findById(req.params.id);
 
@@ -201,7 +200,6 @@ const updateJob = async (req, res) => {
     job.category = category || job.category;
     job.location = location || job.location;
     job.description = description || job.description;
-    job.salary = salary || job.salary;
     job.tags = tags || job.tags;
     job.applicationUrl = applicationUrl || job.applicationUrl;
 

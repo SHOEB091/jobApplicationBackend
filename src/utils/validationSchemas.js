@@ -17,7 +17,6 @@ const jobSchema = Joi.object({
   category: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required(), // MongoDB ObjectId
   location: Joi.string().required(),
   description: Joi.string().required(),
-  salary: Joi.number().required(),
   tags: Joi.array().items(Joi.string()),
   applicationUrl: Joi.string().uri().required(),
 });
@@ -39,7 +38,6 @@ const adminRequestSchema = Joi.object({
 
 const categorySchema = Joi.object({
   name: Joi.string().min(2).required(),
-  description: Joi.string().optional(),
   isActive: Joi.boolean().optional(),
 });
 

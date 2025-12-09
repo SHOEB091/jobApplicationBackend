@@ -63,7 +63,7 @@ const createCategory = async (req, res) => {
       });
     }
 
-    const { name, description, isActive } = req.body;
+    const { name, isActive } = req.body;
 
     // Check if category with same name already exists
     const categoryExists = await Category.findOne({ 
@@ -79,7 +79,6 @@ const createCategory = async (req, res) => {
 
     const category = new Category({
       name,
-      description,
       isActive: isActive !== undefined ? isActive : true,
       createdBy: req.user._id,
     });
@@ -105,7 +104,7 @@ const createCategory = async (req, res) => {
 // @access  Private/Superadmin
 const updateCategory = async (req, res) => {
   try {
-    const { name, description, isActive } = req.body;
+    const { name, isActive } = req.body;
 
     const category = await Category.findById(req.params.id);
 
@@ -132,7 +131,6 @@ const updateCategory = async (req, res) => {
     }
 
     category.name = name || category.name;
-    category.description = description !== undefined ? description : category.description;
     category.isActive = isActive !== undefined ? isActive : category.isActive;
 
     const updatedCategory = await category.save();

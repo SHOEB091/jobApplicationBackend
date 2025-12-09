@@ -4,22 +4,16 @@ const Certification = require('../models/Certification');
 exports.createCertification = async (req, res) => {
   try {
     const { title, fileUrl: linkUrl } = req.body;
-    let fileUrl = '';
-
-    if (req.file) {
-      fileUrl = `/${req.file.path.replace(/\\/g, '/')}`;
-    } else if (linkUrl) {
-      fileUrl = linkUrl;
-    } else {
+    if (!linkUrl) {
       return res.status(400).json({
         success: false,
-        message: 'Please upload a certification file or provide a link'
+        message: 'Please provide a certification link URL'
       });
     }
 
     const certification = await Certification.create({
       title,
-      fileUrl,
+      fileUrl: linkUrl,
       uploadedBy: req.user._id
     });
 

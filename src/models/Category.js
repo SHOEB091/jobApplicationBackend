@@ -8,10 +8,6 @@ const categorySchema = mongoose.Schema(
       unique: true,
       trim: true,
     },
-    description: {
-      type: String,
-      trim: true,
-    },
     slug: {
       type: String,
       unique: true,

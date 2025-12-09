@@ -74,11 +74,6 @@ const requireCompanyAccess = async (req, res, next) => {
       });
     }
 
-    // Superadmin has access to all companies
-    if (req.user.role === 'superadmin') {
-      return next();
-    }
-
     // Admin must have a company and it must match the resource company
     if (req.user.role === 'admin') {
       if (!req.user.company) {

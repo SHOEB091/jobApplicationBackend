@@ -6,10 +6,9 @@ const {
   deleteCertification
 } = require('../controllers/certificationController');
 const { protect, requireRole } = require('../middlewares/authMiddleware');
-const upload = require('../middlewares/uploadMiddleware');
 
 router.route('/')
-  .post(protect, requireRole('superadmin'), upload.single('file'), createCertification)
+  .post(protect, requireRole('superadmin'), createCertification)
   .get(protect, getAllCertifications);
 
 router.route('/:id')
